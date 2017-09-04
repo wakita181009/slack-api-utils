@@ -1,0 +1,28 @@
+# this file is *not* meant to cover or endorse the use of travis, but rather to
+# help confirm pull requests to this project.
+
+language: python
+
+python:
+  - 2.7
+
+install:
+  - pip install -r requirements
+  - pip install coveralls
+
+script:
+  - coverage run --source=test_api setup.py test
+
+after_success:
+  - coveralls
+
+dist:
+  - trusty
+
+env:
+  global:
+    secure: YgYR4pwJ24GeHifavL/IyLZarP2sL8+ve1C0toIa95OpMoAoq6Te4QxuVuatLv7HGXC8lihXaJ2decMywgnYoKZSqBruXuR40iibCz/3VjXPXssKSYAJ8VIYs35Yiju61sLV2WAz1DxAZueqGU5zppdOr89vW/Zxnaefn9LPobd6GVnxMI3AlAJWumvG4V5bff2+nX4hs/7nbLr72iz+YRZrbclYnU87nJXIgqsNBxB2FtJK/Ka5remnCdCxWnBIxTZcxl+hthvP26JAZH7LlbHmpIOvR3tbkjAgjXnaPKFi7Xb450h8EXHWLHoak3rLJs3UevWlfABT9YidcMcgzLYAnIDQoi8SKRGZzdKjs3q/6/Y5CDnFMbLELdUBL+fJWWTfy2O6fimVwoZi6Jw6KD4cDUSpjoLSgVwD86W7JlDBVAeiUH+x9cNbtJF9lA4Gpp7fTUkvv/3QnoSCcIAJ1YcvCXzp+nHmBDCJsos9W2j/OlDRC1WCfrX4lql3j+LlfDKWEdjozwALYokfrWH+Efz/tdZSUQEIEygy4bbJF9+hPo/bLe1qOKnq5mwaEq1qPE1kQY9HciaUc42sy3OFsZFUTjprPA+IML/Ys8c0mxS0/M1G4im3J2AEqjstPGHHPAHDXSa2lKZHQONjXERWa55mbRJL1oPudPS66sgF+Qk=
+
+notifications:
+  slack:
+    secure: sLRSovSiS6dRw5dXgFTuKiYUjdzT+sv+YUWxRFICpq1K8rItQZCmX9fEhlk2Mb383YcjVw+SPQ5gQJTA5xyIhFcG2zLnWGd4SJQu5TbDeMMovMmtbtZs2SlGYS6KJVyjsroX4KTj5oKsBgeTt5V306wNV/a87K0hG4gPKBoj5KVNZiWNpqAB8Ku7Z1mVen2ka4bFxyXPR0Fnp9S23KQUpZAXSxd6HKctLl30XgTeR7AvVykJVpOyrGXBwBMeM97eHC7pMxon+C2IkmkLpF/fDQgMkIlL+OBDmHy5nwLHPK9uMyDfy17AQrDyFX+2hu7+XhmmrqaSjTZq5boSL7qCHYG9rbgqPhls+hs+GFKIMKogqj+M6ZTHP2fms4/k6K+N1femFGtAIsIXm5Q4dxmW+cSR0eFaVO7nTP93aYxpLeDqAqk3DHyCNOaK3Ys+wjK4prqXBb3z+/FTTCefTiUxIaEpHrwsjFIvIaje8/v+Jdx9xClr72POX/NhnfPPDcXYCu5EzcCjxjJoResKyETuJ7NhEoDTk3ZEH7+VkkE8RACnzhqRDa51o/X2XvbpBlrqYOVNnNrl3j2VXw8pXZZewNjB5DGiY8Fna/qjGQINLhLjGCBAJ8YbLNVbYsLG4Oajz6WN1a+iTigBYEg0GVRZi+dQu37yOTeBzYdC+tEGUcc=
