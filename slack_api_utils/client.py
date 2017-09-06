@@ -9,7 +9,7 @@ from slacker import Slacker, Error
 from utils import TimeRange
 
 logger = logging.getLogger("slack-api-utils")
-logger.setLevel(10)
+logger.setLevel(logging.DEBUG)
 
 # And always display on console
 stderr_log_handler = logging.StreamHandler()
@@ -125,8 +125,8 @@ class Client(Slacker):
         else:
             return "_"
 
-    def delete_message(self, channel_name=None, direct_name=None, group_name=None, user_name=None,
-                       bot=False, perform=False):
+    def get_messages(self, channel_name=None, direct_name=None, group_name=None, user_name=None,
+                     bot=False):
         _channel_id = None
         _user_id = None
         _api_end_point = None
@@ -161,13 +161,55 @@ class Client(Slacker):
                 sys.exit("User not found")
 
         # Delete messages on certain channel
-        time_range = TimeRange()
-        self._delete_message(_channel_id, time_range, user_id=_user_id, api_end_point=_api_end_point,
-                             bot=bot, perform=perform)
+        _time_range = TimeRange()
+        for message in self._get_message_history(
+                _channel_id, _time_range, _api_end_point, _user_id, bot):
+            yield message["text"]
 
-    def _delete_message(self, channel_id, time_range, user_id=None, api_end_point=None,
+    def delete_messages(self, channel_name=None, direct_name=None, group_name=None, user_name=None,
                         bot=False, perform=False):
+        _channel_id = None
+        _user_id = None
+        _api_end_point = None
 
+        # If channel's name is supplied
+        if channel_name:
+            _channel_id = self.get_channel_id_by_name(channel_name)
+            _api_end_point = self.channels.history
+
+        # If DM's name is supplied
+        if direct_name:
+            _channel_id = self.get_direct_id_by_name(direct_name)
+            _api_end_point = self.im.history
+
+        # If channel's name is supplied
+        if group_name:
+            _channel_id = self.get_group_id_by_name(group_name)
+            _api_end_point = self.groups.history
+
+        if _channel_id is None:
+            sys.exit("Channel, direct message or private group not found")
+
+        # If user's name is also supplied
+        if user_name:
+            # A little bit tricky here, we use -1 to indicates `--user=*`
+            if user_name == "*":
+                _user_id = -1
+            else:
+                _user_id = self.get_user_id_by_name(user_name)
+
+            if _user_id is None:
+                sys.exit("User not found")
+
+        # Delete messages on certain channel
+        _time_range = TimeRange()
+        for message in self._get_message_history(
+                _channel_id, _time_range, _api_end_point, _user_id, bot):
+            # Delete one message
+            self.delete_one_message_on_channel(_channel_id, message, perform)
+
+    @staticmethod
+    def _get_message_history(channel_id, time_range, api_end_point, user_id=None, bot=False):
         oldest = time_range.start_time
         latest = time_range.end_time
 
@@ -185,17 +227,17 @@ class Client(Slacker):
             for message in messages:
                 latest = message["ts"]
 
-                # Delete user messages
+                # User messages
                 if message["type"] == "message":
                     # If it's a normal user message
                     if message.get("user"):
-                        # Delete message if user_name matched or `--user=*`
+                        # message if user_name matched or `--user=*`
                         if message.get("user") == user_id or user_id == -1:
-                            self.delete_one_message_on_channel(channel_id, message, perform)
+                            yield message
 
-                    # Delete bot messages
+                    # Bot messages
                     if bot and message.get("subtype") == "bot_message":
-                        self.delete_one_message_on_channel(channel_id, message, perform)
+                        yield message
 
                 # Exceptions
                 else:
