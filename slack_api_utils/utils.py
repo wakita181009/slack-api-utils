@@ -8,9 +8,8 @@ class TimeRange(object):
     def __init__(self, start_time=None, end_time=None):
         def parse_time(t):
             try:
-                _time = time.mktime(time.strptime(t, "%Y%m%d"))
-                return unicode(_time)
-            except Exception:
+                return unicode(time.mktime(time.strptime(t, "%Y%m%d")))
+            except (TypeError, ValueError):
                 return "0"
 
         self.start_time = parse_time(start_time)
