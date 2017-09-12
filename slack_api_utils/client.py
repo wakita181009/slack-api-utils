@@ -264,3 +264,29 @@ class Client(Slacker):
                            + self._get_user_name(message)
                            + " :  %s"
                            , message.get("text", ""))
+
+    def invite_group(self, group_id=None, group_name=None, user_id=None, user_name=None):
+        channel_id = group_id or self.get_group_id_by_name(group_name)
+        user_id = user_id or self.get_user_id_by_name(user_name)
+
+        if not channel_id or not user_id:
+            sys.exit("group_id or user_id not found")
+
+        res = self.groups.invite(channel=channel_id, user=user_id).body
+        if not res["ok"]:
+            logger.error(res["error"])
+            return res["ok"], res["error"]
+
+        else:
+            return res["ok"], "success"
+
+    def kick_group(self, group_id=None, group_name=None, user_id=None, user_name=None):
+        channel_id = group_id or self.get_group_id_by_name(group_name)
+        user_id = user_id or self.get_user_id_by_name(user_name)
+
+        res = self.groups.kick(channel=channel_id, user=user_id).body
+        if not res["ok"]:
+            return res["ok"], res["error"]
+
+        else:
+            return res["ok"], "success"

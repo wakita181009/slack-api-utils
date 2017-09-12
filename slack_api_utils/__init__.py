@@ -3,5 +3,5 @@ from __future__ import unicode_literals
 
 __author__ = "wakita181009"
 __author_email__ = "wakita181009@gmail.com"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __license__ = "MIT"
