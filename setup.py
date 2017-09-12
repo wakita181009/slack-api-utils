@@ -14,7 +14,7 @@ from os import path
 from codecs import open
 
 # Always prefer setuptools over distutils
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from slack_api_utils import __version__, __license__, __author__, __author_email__
 
@@ -67,6 +67,10 @@ setup(
 
     # What does your project relate to?
     keywords="slack api",
+
+    # You can just specify the packages manually here if your project is
+    # simple. Or you can use find_packages().
+    packages=find_packages(exclude=["contrib", "docs", "tests"]),
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
