@@ -126,7 +126,7 @@ class Client(Slacker):
             return "_"
 
     def get_messages(self, channel_name=None, direct_name=None, group_name=None, user_name=None,
-                     bot=False):
+                     bot=False, start_time=None, end_time=None):
         _channel_id = None
         _user_id = None
         _api_end_point = None
@@ -161,13 +161,13 @@ class Client(Slacker):
                 sys.exit("User not found")
 
         # Delete messages on certain channel
-        _time_range = TimeRange()
+        _time_range = TimeRange(start_time, end_time)
         for message in self._get_message_history(
                 _channel_id, _time_range, _api_end_point, _user_id, bot):
             yield message["text"]
 
     def delete_messages(self, channel_name=None, direct_name=None, group_name=None, user_name=None,
-                        bot=False, perform=False):
+                        bot=False, perform=False, start_time=None, end_time=None):
         _channel_id = None
         _user_id = None
         _api_end_point = None
@@ -202,7 +202,7 @@ class Client(Slacker):
                 sys.exit("User not found")
 
         # Delete messages on certain channel
-        _time_range = TimeRange()
+        _time_range = TimeRange(start_time, end_time)
         for message in self._get_message_history(
                 _channel_id, _time_range, _api_end_point, _user_id, bot):
             # Delete one message
