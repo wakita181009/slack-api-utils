@@ -24,6 +24,7 @@ class Client(Slacker):
         self._user_dict = {}
         self._channel_dict = {}
         self._im_dict = {}
+        self._mpim_dict = {}
         self._group_dict = {}
 
     @staticmethod
@@ -53,7 +54,7 @@ class Client(Slacker):
     def get_user_dict(self):
         if not self._user_dict:
             res = self._res_list_body(self.users)
-            if res is None:
+            if not res["ok"]:
                 return
 
             members = res["members"]
@@ -71,7 +72,7 @@ class Client(Slacker):
     def get_channel_dict(self):
         if not self._channel_dict:
             res = self._res_list_body(self.channels)
-            if res is None:
+            if not res["ok"]:
                 return
 
             channels = res["channels"]
@@ -89,7 +90,7 @@ class Client(Slacker):
     def get_direct_dict(self):
         if not self._im_dict:
             res = self._res_list_body(self.im)
-            if res is None:
+            if not res["ok"]:
                 return
 
             ims = res["ims"]
@@ -97,6 +98,24 @@ class Client(Slacker):
                 self._im_dict[i["id"]] = self.get_user_name_by_id(i["user"])
 
         return self._im_dict
+
+    def get_mpdirect_name_by_id(self, mpdirect_id):
+        return self.get_mpdirect_dict().get(mpdirect_id)
+
+    def get_mpdirect_id_by_name(self, mpdirect_name):
+        return self.get_id_by_name(self.get_mpdirect_dict(), mpdirect_name)
+
+    def get_mpdirect_dict(self):
+        if not self._mpim_dict:
+            res = self._res_list_body(self.mpim)
+            if not res["ok"]:
+                return
+
+            mpims = res["groups"]
+            for mpim in mpims:
+                self._mpim_dict[mpim["id"]] = set([self.get_user_name_by_id(user_id) for user_id in mpim["members"]])
+
+        return self._mpim_dict
 
     def get_group_name_by_id(self, group_id):
         return self.get_group_dict().get(group_id)
@@ -107,7 +126,7 @@ class Client(Slacker):
     def get_group_dict(self):
         if not self._group_dict:
             res = self._res_list_body(self.groups)
-            if res is None:
+            if not res["ok"]:
                 return
 
             groups = res["groups"]
