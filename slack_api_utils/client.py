@@ -144,7 +144,7 @@ class Client(Slacker):
         else:
             return "_"
 
-    def get_messages(self, channel_name=None, direct_name=None, group_name=None, user_name=None,
+    def get_messages(self, channel_name=None, direct_name=None, mpdirect_name=None, group_name=None, user_name=None,
                      bot=False, start_time=None, end_time=None):
         _channel_id = None
         _user_id = None
@@ -159,6 +159,11 @@ class Client(Slacker):
         if direct_name:
             _channel_id = self.get_direct_id_by_name(direct_name)
             _api_end_point = self.im.history
+
+        # If group DM's name is supplied
+        if mpdirect_name:
+            _channel_id = self.get_mpdirect_id_by_name(mpdirect_name)
+            _api_end_point = self.mpim.history
 
         # If channel's name is supplied
         if group_name:
@@ -185,7 +190,7 @@ class Client(Slacker):
                 _channel_id, _time_range, _api_end_point, _user_id, bot):
             yield message["text"]
 
-    def delete_messages(self, channel_name=None, direct_name=None, group_name=None, user_name=None,
+    def delete_messages(self, channel_name=None, direct_name=None, mpdirect_name=None, group_name=None, user_name=None,
                         bot=False, perform=False, start_time=None, end_time=None):
         _channel_id = None
         _user_id = None
@@ -200,6 +205,11 @@ class Client(Slacker):
         if direct_name:
             _channel_id = self.get_direct_id_by_name(direct_name)
             _api_end_point = self.im.history
+
+        # If group DM's name is supplied
+        if mpdirect_name:
+            _channel_id = self.get_mpdirect_id_by_name(mpdirect_name)
+            _api_end_point = self.mpim.history
 
         # If channel's name is supplied
         if group_name:
